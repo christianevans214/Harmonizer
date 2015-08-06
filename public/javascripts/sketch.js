@@ -6,7 +6,7 @@ var doCenterClip = false;
 var centerClipThreshold = 0.0;
 var preNormalize = true;
 var postNormalize = true;
-var root = "C";
+var root = "A";
 var drums;
 
 var notesMap = {
@@ -26,13 +26,12 @@ var notesMap = {
 
 var newRoot = function(root){
 	// drums.kill();
-  	Gibber.scale.mode.seq(['Minor'])
-	Gibber.scale.root.seq(['A2'],1)
 	// Gibber.scale.root.seq([root+'4', noteStrings[noteStrings.indexOf(root)+5] + "4"],1)
-	console.log(notesMap)
-	a.chord.seq([notesMap[root]],1/8)
+	// console.log(notesMap)
+	// a.chord.seq([notesMap[root]],1/8)
+	fm.note.seq(notesMap[root].rnd(), [1/4,1/8].rnd(1/16,2))
+	pluck.note.seq(notesMap[root].rnd(),[1/16,1/8].rnd())
 
-	// fm.note.seq([0,0,0,0],1/8)
 	// drums = EDrums('x*o*x*o-')
 	// drums.amp = .75
 }
@@ -40,14 +39,19 @@ function setup() {
 	// uncomment this line to make the canvas the full size of the window
 	// createCanvas(windowWidth, windowHeight);
 
-	drums = EDrums('x***o**x*x*xo-*-')
-	drums.amp = .75
+  	Gibber.scale.mode.seq(['Dorian'])
+	Gibber.scale.root.seq(['A3'],1)
+	// drums = EDrums('x***o**x*x*xo-*-')
 	reverb = new p5.Reverb();
-  
+  	gain = Gain({ amp: 1 })
 
-	a = FM({maxVoices:4,amp:.8})
+	a = new FM({maxVoices:4,amp:.8})
+	delay = Delay()
+	fm = new FM( 'bass' );
+	fm.fx.add(gain)
 
-	// fm = FM( 'bass' );
+	pluck = Pluck();
+	pluck.fx.add(Reverb(),Delay())
 
 
 	b= LPF();
@@ -57,11 +61,12 @@ function setup() {
 	newRoot(root);
 	createCanvas(windowWidth, windowHeight);
 	mic = new p5.AudioIn();
+
 	// lowPass = new p5.LowPass();
 	// lowPass.disconnect();
-	mic.connect(reverb);
+	// mic.connect(reverb);
 
-	reverb.connect()
+	// reverb.connect()
 
 	// lowPass.connect("Master")
 
@@ -86,7 +91,7 @@ function setup() {
 	fft.setInput(mic);
 	// peakDetect = new p5.PeakDetect();
 	mic.start();
-	setFrameRate(3);
+	setFrameRate(4);
 }
 
 function makeMajorChord(freq){
@@ -120,6 +125,7 @@ var recalcAvg = function(newFreq, curAvg, count){
 }
 var curNote;
 function draw() {
+		// drums.amp = mic.getLevel();
 	// var freqs = fft.analyze();
 	// // console.log(Math.max.apply(null,fft.analyze()));
 	// var maxPoints = []
