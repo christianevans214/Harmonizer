@@ -6,35 +6,87 @@ var doCenterClip = false;
 var centerClipThreshold = 0.0;
 var preNormalize = true;
 var postNormalize = true;
+var root = "C";
+var drums;
 
+var notesMap = {
+	'A': [0,2,4,6],
+	'A#': [0,3,4,6],
+	'B': [1,3,5,7],
+	'C': [2,4,6,8],
+	'C#': [2,4,6,8],
+	'D': [3,5,7,9],
+	'D#': [3,5,7,9],
+	'E': [4,6,1,3],
+	'F': [6,7,9,4],
+	'F#': [4,6,1,3],
+	'G': [7,9,4,6],
+	'G#':[7,9,4,6]
+}
+
+var newRoot = function(root){
+	// drums.kill();
+  	Gibber.scale.mode.seq(['Minor'])
+	Gibber.scale.root.seq(['A2'],1)
+	// Gibber.scale.root.seq([root+'4', noteStrings[noteStrings.indexOf(root)+5] + "4"],1)
+	console.log(notesMap)
+	a.chord.seq([notesMap[root]],1/8)
+
+	// fm.note.seq([0,0,0,0],1/8)
+	// drums = EDrums('x*o*x*o-')
+	// drums.amp = .75
+}
 function setup() {
 	// uncomment this line to make the canvas the full size of the window
 	// createCanvas(windowWidth, windowHeight);
+
+	drums = EDrums('x***o**x*x*xo-*-')
+	drums.amp = .75
+	reverb = new p5.Reverb();
+  
+
+	a = FM({maxVoices:4,amp:.8})
+
+	// fm = FM( 'bass' );
+
+
+	b= LPF();
+	a.fx.add(b, Reverb())
+	// b = FM('bass')
+
+	newRoot(root);
 	createCanvas(windowWidth, windowHeight);
 	mic = new p5.AudioIn();
-	lowPass = new p5.LowPass();
-	lowPass.disconnect();
-	mic.connect(lowPass);
+	// lowPass = new p5.LowPass();
+	// lowPass.disconnect();
+	mic.connect(reverb);
+
+	reverb.connect()
+
+	// lowPass.connect("Master")
+
+	// lowPass.connect()
 	// osc3 = new p5.Oscillator();
  //  	osc3.setType('sine');
  //  	osc3.amp(0.5);
  //  	osc3.start();
 
-	osc = new p5.Oscillator();
-  	osc.setType('sine');
-  	osc.amp(0.7);
-  	osc.start();
-  	osc.freq(0);
+	// osc = new p5.Oscillator();
+ //  	osc.setType('sine');
+ //  	osc.amp(0.3);
+ //  	osc.start();
+ //  	osc.freq(0);
 
 	// osc2 = new p5.Oscillator();
 	// osc2.setType('sine');
- //  	osc2.amp(0.7);
-  	// osc2.start();
+ //  	osc2.amp(0.3);
+ //  	osc2.start();
 
 	fft = new p5.FFT();
-	fft.setInput(lowPass);
+	fft.setInput(mic);
 	// peakDetect = new p5.PeakDetect();
 	mic.start();
+	setFrameRate(3);
 }
 
 function makeMajorChord(freq){
@@ -53,7 +105,7 @@ var currentFreq = 130;
 		return Math.round( noteNum ) + 69;
 	}
 
-	var noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+	var noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C", "C#", "D", "D#", "E"];
 
 	var note;
 
@@ -61,81 +113,66 @@ function frequencyFromNoteNumber( note ) {
 	return 440 * Math.pow(2,(note-69)/12);
 }
 
-
-
+//runs 50-60 times per second (every 20-30 ms)
+//could we throttle this?
+var recalcAvg = function(newFreq, curAvg, count){
+	return (curAvg * count + newFreq)/(count + 1);
+}
+var curNote;
 function draw() {
-	// draw stuff here
-	// ellipse(width / 2, height / 2, 50, 50);
-	// micLevel = mic.getLevel();
-	// console.log(micLevel);
-	// console.log(mic);
-	var timeDomain = fft.waveform(2048, 'float32');
-	var corrBuff = autoCorrelate(timeDomain);
+	// var freqs = fft.analyze();
+	// // console.log(Math.max.apply(null,fft.analyze()));
+	// var maxPoints = []
+	// freqs.forEach(function(elem,index){
+	// 	if (elem > 200){
+	// 		maxPoints.push([elem,index])
+	// 	}
+	// })
+	// var allOsc = [osc,osc2,osc3]
+	// console.log(maxPoints)
+	// if (maxPoints.length > 0){
+	// 	allOsc.forEach(function(elem,index){
+	// 		elem.freq(maxPoints[index][0])
+	// 	})
+	// }	
+
+	// console.log(maxPoints)
+	// console.log(maxPoints.length);
 
 	background(200);
-
-	// array of values from -1 to 1
 	var timeDomain = fft.waveform(2048, 'float32');
 	var corrBuff = autoCorrelate(timeDomain);
-	// console.log(mic.getLevel());
-	// console.log(Math.abs(freq-currentFreq));
-
-
-
-	if (mic.getLevel()>0.1) {
+	if (mic.getLevel()>0.13) {
 	var freq = findFrequency(corrBuff);
-		beginShape();
-		for (var i = 0; i < corrBuff.length; i++) {
-			var w = map(i, 0, corrBuff.length, 0, width);
-			var h = map(corrBuff[i], -1, 1, height, 0);
-			curveVertex(w, h);
-		}
-		endShape();
-
-		fill(0);
-		text('Center Clip: ' + centerClipThreshold, 20, 20);
-		line(0, height / 2, width, height / 2);
-		// osc.freq(freq*1.5);
-		// osc2.freq(freq*1.25);
-		// console.log(mic.getLevel())
-		text('Fundamental Frequency: ' + freq.toFixed(2), 20, 50);
-		note =  noteFromPitch(freq);
-		osc.freq(frequencyFromNoteNumber(note));
+	note = noteFromPitch(freq);
+	if(curNote=== note){
+		console.log("on point")
+	}else{
 		console.log( noteStrings[note%12] )
+		newRoot(noteStrings[note%12]);
+		curNote = note;
+	}
+	beginShape();
+	for (var i = 0; i < corrBuff.length; i++) {
+		var w = map(i, 0, corrBuff.length, 0, width);
+		var h = map(corrBuff[i], -1, 1, height, 0);
+		curveVertex(w, h);
+	}
+	endShape();
 
+	fill(0);
+	text('Center Clip: ' + centerClipThreshold, 20, 20);
+	line(0, height / 2, width, height / 2);
+	// osc.freq(freq*1.5);
+	// osc2.freq(freq*1.2);
+	console.log(mic.getLevel())
+	text('Fundamental Frequency: ' + freq.toFixed(2), 20, 50);
+	note =  noteFromPitch(freq);
+	// osc.freq(frequencyFromNoteNumber(note));
+	console.log( noteStrings[note%12] )
 
 	}
 
-	// console.log(freq);
-	// peakDetect.update(fft);
-	// console.log(peakDetect.isDetected);
-	// if (peakDetect.isDetected) {
-	// 	var maxIndex;
-	// 	var maxPitchAmp = spectrum.reduce(function(curMax, nextBit, index) {
-	// 		if (curMax > nextBit) return curMax;
-	// 		else {
-	// 			maxIndex = index;
-	// 			return nextBit;
-	// 		}
-	// 	})
-	// 	console.log(maxIndex);
-	// }
-	// fft.smooth(0);
-	// // spectrum.smooth();
-	// noStroke();
-	// // console.log(mic);
-	// // console.log(spectrum, "this is going");
-	// fill(0, 255, 0); // spectrum is green
-	// var maxIndex;
-	// var maxPitchAmp = spectrum.reduce(function(curMax, nextBit, index) {
-	// 		if (curMax > nextBit) return curMax;
-	// 		else {
-	// 			maxIndex = index;
-	// 			return nextBit;
-	// 		}
-	// 	})
-	// 	// console.log(maxIndex, maxPitchAmp);
-	// endShape()
 }
 
 
