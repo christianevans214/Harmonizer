@@ -15,12 +15,53 @@ function setup() {
 	lowPass = new p5.LowPass();
 	lowPass.disconnect();
 	mic.connect(lowPass);
+	// osc3 = new p5.Oscillator();
+ //  	osc3.setType('sine');
+ //  	osc3.amp(0.5);
+ //  	osc3.start();
+
+	osc = new p5.Oscillator();
+  	osc.setType('sine');
+  	osc.amp(0.7);
+  	osc.start();
+  	osc.freq(0);
+
+	// osc2 = new p5.Oscillator();
+	// osc2.setType('sine');
+ //  	osc2.amp(0.7);
+  	// osc2.start();
 
 	fft = new p5.FFT();
 	fft.setInput(lowPass);
 	// peakDetect = new p5.PeakDetect();
 	mic.start();
 }
+
+function makeMajorChord(freq){
+	osc.freq(freq*1.25)
+	osc2.freq(freq*1.5)
+}
+
+function makeMinorChord(freq){
+	osc.freq(freq* 1.2)
+	osc2.freq(freq * 1.5)
+}
+var currentFreq = 130;
+
+	function noteFromPitch( frequency ) {
+		var noteNum = 12 * (Math.log( frequency / 440 )/Math.log(2) );
+		return Math.round( noteNum ) + 69;
+	}
+
+	var noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+
+	var note;
+
+function frequencyFromNoteNumber( note ) {
+	return 440 * Math.pow(2,(note-69)/12);
+}
+
+
 
 function draw() {
 	// draw stuff here
@@ -36,8 +77,13 @@ function draw() {
 	// array of values from -1 to 1
 	var timeDomain = fft.waveform(2048, 'float32');
 	var corrBuff = autoCorrelate(timeDomain);
-	console.log(mic.getLevel());
-	if (mic.getLevel() > 0.02) {
+	// console.log(mic.getLevel());
+	// console.log(Math.abs(freq-currentFreq));
+
+
+
+	if (mic.getLevel()>0.1) {
+	var freq = findFrequency(corrBuff);
 		beginShape();
 		for (var i = 0; i < corrBuff.length; i++) {
 			var w = map(i, 0, corrBuff.length, 0, width);
@@ -49,10 +95,15 @@ function draw() {
 		fill(0);
 		text('Center Clip: ' + centerClipThreshold, 20, 20);
 		line(0, height / 2, width, height / 2);
-		var freq = findFrequency(corrBuff);
-
+		// osc.freq(freq*1.5);
+		// osc2.freq(freq*1.25);
 		// console.log(mic.getLevel())
 		text('Fundamental Frequency: ' + freq.toFixed(2), 20, 50);
+		note =  noteFromPitch(freq);
+		osc.freq(frequencyFromNoteNumber(note));
+		console.log( noteStrings[note%12] )
+
+
 	}
 
 	// console.log(freq);
