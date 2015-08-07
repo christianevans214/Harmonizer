@@ -1,19 +1,40 @@
 <html>
 <head>
+
+
+ <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+
   <meta charset="UTF-8">
 
   <script language="javascript" type="text/javascript" src="p5/p5.js"></script>
    <script language="javascript" type="text/javascript" src="p5/addons/p5.gibber.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script language="javascript" type="text/javascript" src="p5/addons/p5.sound.js"></script>
   <script language="javascript" type="text/javascript" src="p5/addons/p5.dom.js"></script>
   <!-- uncomment lines below to include extra p5 libraries -->
-<!-- 	<script language="javascript" src="../addons/p5.dom.js"></script>
+<!--  <script language="javascript" src="../addons/p5.dom.js"></script>
   <script language="javascript" src="../addons/p5.sound.js"></script> -->
-  <script language="javascript" type="text/javascript" src="javascripts/sketch.js"></script>
+  <script language="javascript" type="text/javascript" src="javascripts/justFreqThings.js"></script>
+
+
   <!-- this line removes any default padding and style. you might only need one of these values set. -->
   <style> body {padding: 0; margin: 0;} </style>
 </head>
   <body>
+    <canvas width="700" height="100"></canvas>
+
+ <!--   <div>
+     <div class="drum" id="1">Yo</div>
+     <div class="drum" id="2">Ths</div>
+     <div class="drum" id="3">Is</div>
+     <div class="drum" id="4">Dog</div>
+     <div class="drum" id="5">Dog</div>
+     <div class="drum" id="6">Dog</div>
+     <div class="drum" id="7">Dog</div>
+     <div class="drum" id="8">Dog</div>
+    </div>
+  -->
+
     {% block content %}{% endblock %}
   </body>
 </html>

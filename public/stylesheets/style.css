@@ -6,3 +6,16 @@ body {
 a {
   color: #00B7FF;
 }
+
+
+.drum{
+	display: inline-block;
+	font: 20px "Monaco";
+	border: 1px solid black;
+	border-radius: 5px;
+	width: 100px;
+}
+.drum:hover{
+	background: grey;
+	cursor: pointer;
+}

@@ -6,87 +6,23 @@ var doCenterClip = false;
 var centerClipThreshold = 0.0;
 var preNormalize = true;
 var postNormalize = true;
-var root = "A";
-var drums;
 
-var notesMap = {
-	'A': [0,2,4,6],
-	'A#': [0,3,4,6],
-	'B': [1,3,5,7],
-	'C': [2,4,6,8],
-	'C#': [2,4,6,8],
-	'D': [3,5,7,9],
-	'D#': [3,5,7,9],
-	'E': [0,2,4,6],
-	'F': [5,7,9,11],
-	'F#': [3,5,7,9],
-	'G': [2,4,6,8],
-	'G#':[7,9,4,6]
-}
 
-var newRoot = function(root){
-	// drums.kill();
-	// Gibber.scale.root.seq([root+'4', noteStrings[noteStrings.indexOf(root)+5] + "4"],1)
-	// console.log(notesMap)
-	// a.chord.seq([notesMap[root]],1/8)
-	fm.note.seq(notesMap[root].rnd(), [1/4,1/8].rnd(1/16,2))
-	pluck.note.seq(notesMap[root].rnd(),[1/16,1/8].rnd())
 
-	// drums = EDrums('x*o*x*o-')
-	// drums.amp = .75
-}
 function setup() {
 	// uncomment this line to make the canvas the full size of the window
 	// createCanvas(windowWidth, windowHeight);
 
-  	Gibber.scale.mode.seq(['Dorian'])
-	Gibber.scale.root.seq(['A3'],1)
-	drums = EDrums(drumStr)
-	reverb = new p5.Reverb();
-  	gain = Gain({ amp: 1 })
-
-	a = new FM({maxVoices:4,amp:.8})
-	delay = Delay()
-	fm = new FM( 'bass' );
-	fm.fx.add(gain)
-
-	pluck = Pluck();
-	pluck.fx.add(Reverb(),Delay())
 
 
-	b= LPF();
-	a.fx.add(b, Reverb())
 	// b = FM('bass')
 
-	newRoot(root);
+	// newRoot(root);
 	createCanvas(windowWidth, windowHeight);
 	mic = new p5.AudioIn();
 
 	// lowPass = new p5.LowPass();
 	// lowPass.disconnect();
-	mic.connect(reverb);
-
-	reverb.connect()
-
-	// lowPass.connect("Master")
-
-	// lowPass.connect()
-	// osc3 = new p5.Oscillator();
- //  	osc3.setType('sine');
- //  	osc3.amp(0.5);
- //  	osc3.start();
-
-	// osc = new p5.Oscillator();
- //  	osc.setType('sine');
- //  	osc.amp(0.3);
- //  	osc.start();
- //  	osc.freq(0);
-
-	// osc2 = new p5.Oscillator();
-	// osc2.setType('sine');
- //  	osc2.amp(0.3);
- //  	osc2.start();
-
 	fft = new p5.FFT();
 	fft.setInput(mic);
 	// peakDetect = new p5.PeakDetect();
@@ -94,15 +30,7 @@ function setup() {
 	setFrameRate(4);
 }
 
-function makeMajorChord(freq){
-	osc.freq(freq*1.25)
-	osc2.freq(freq*1.5)
-}
 
-function makeMinorChord(freq){
-	osc.freq(freq* 1.2)
-	osc2.freq(freq * 1.5)
-}
 var currentFreq = 130;
 
 	function noteFromPitch( frequency ) {
@@ -155,7 +83,7 @@ function draw() {
 		console.log("on point")
 	}else{
 		console.log( noteStrings[note%12] )
-		newRoot(noteStrings[note%12]);
+		// newRoot(noteStrings[note%12]);
 		curNote = note;
 	}
 	beginShape();
