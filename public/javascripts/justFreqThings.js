@@ -29,33 +29,33 @@ var newRoot = function(root){
 	// Gibber.scale.root.seq([root+'4', noteStrings[noteStrings.indexOf(root)+5] + "4"],1)
 	// console.log(notesMap)
 	// a.chord.seq([notesMap[root]],1/8)
-	fm.note.seq(notesMap[root].rnd(), [1/4,1/8].rnd(1/16,2))
-	pluck.note.seq(notesMap[root].rnd(),[1/16,1/8].rnd())
+	// fm.note.seq(notesMap[root].rnd(), [1/4,1/8].rnd(1/16,2))
+	// pluck.note.seq(notesMap[root].rnd(),[1/16,1/8].rnd())
 
 	// drums = EDrums('x*o*x*o-')
 	// drums.amp = .75
 }
 function setup() {
 	// uncomment this line to make the canvas the full size of the window
-	createCanvas(windowWidth, windowHeight);
+	// createCanvas(windowWidth, windowHeight);
 
-  	Gibber.scale.mode.seq(['Dorian'])
-	Gibber.scale.root.seq(['A3'],1)
-	drums = EDrums(drumStr)
-	reverb = new p5.Reverb();
-  	gain = Gain({ amp: 1 })
+  	// Gibber.scale.mode.seq(['Dorian'])
+	// Gibber.scale.root.seq(['A3'],1)
+	// drums = EDrums(drumStr)
+	// reverb = new p5.Reverb();
+  	// gain = Gain({ amp: 1 })
 
-	a = new FM({maxVoices:4,amp:.8})
-	delay = Delay()
-	fm = new FM( 'bass' );
-	fm.fx.add(gain)
+	// a = new FM({maxVoices:4,amp:.8})
+	// delay = Delay()
+	// fm = new FM( 'bass' );
+	// fm.fx.add(gain)
 
-	pluck = Pluck();
-	pluck.fx.add(Reverb(),Delay())
+	// pluck = Pluck();
+	// pluck.fx.add(Reverb(),Delay())
 
 
 	b= LPF();
-	a.fx.add(b, Reverb())
+	// a.fx.add(b, Reverb())
 	// b = FM('bass')
 
 	newRoot(root);
@@ -145,7 +145,7 @@ function draw() {
 	// console.log(maxPoints)
 	// console.log(maxPoints.length);
 	
-	background(200);
+	// background(200);
 	var timeDomain = fft.waveform(2048, 'float32');
 	var corrBuff = autoCorrelate(timeDomain);
 	if (mic.getLevel()>0.13) {
@@ -160,21 +160,21 @@ function draw() {
 		console.log("octave?",note,  note/12, Math.floor(note/12));
 		updateMeasure(noteStrings[note%12], Math.floor(note/12))
 	}
-	beginShape();
-	for (var i = 0; i < corrBuff.length; i++) {
-		var w = map(i, 0, corrBuff.length, 0, width);
-		var h = map(corrBuff[i], -1, 1, height, 0);
-		curveVertex(w, h);
-	}
-	endShape();
+	// beginShape();
+	// for (var i = 0; i < corrBuff.length; i++) {
+	// 	var w = map(i, 0, corrBuff.length, 0, width);
+	// 	var h = map(corrBuff[i], -1, 1, height, 0);
+	// 	curveVertex(w, h);
+	// }
+	// endShape();
 
-	fill(0);
-	text('Center Clip: ' + centerClipThreshold, 20, 20);
-	line(0, height / 2, width, height / 2);
+	// fill(0);
+	// text('Center Clip: ' + centerClipThreshold, 20, 20);
+	// line(0, height / 2, width, height / 2);
 	// osc.freq(freq*1.5);
 	// osc2.freq(freq*1.2);
 	console.log(mic.getLevel())
-	text('Fundamental Frequency: ' + freq.toFixed(2), 20, 50);
+	// text('Fundamental Frequency: ' + freq.toFixed(2), 20, 50);
 	note =  noteFromPitch(freq);
 	// osc.freq(frequencyFromNoteNumber(note));
 	console.log( noteStrings[note%12] )

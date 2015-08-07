@@ -8,9 +8,11 @@ jQuery(document).ready(function(){
 	var formatter;
 	var counter=0;
 	var theNotes = [];
+	var measureCounter = 0;
 
 
-var canvas = jQuery("#notesCanvas")[0];
+var canvas = jQuery(".notesCanvas")[0];
+console.log(canvas);
 
 window.updateMeasure = function(note, octave){
 	console.log(note, octave);
@@ -23,7 +25,7 @@ window.updateMeasure = function(note, octave){
   newCtx = renderer.getContext();
 	  newCtx.clearRect(0, 0, canvas.width, canvas.height);
    stave = new Vex.Flow.Stave(10, 0, 500);
-  stave.addClef("treble").setContext(newCtx).draw();
+ stave.addClef("treble").setContext(newCtx).draw();
 if (counter == 0){
   notes = [
   	new Vex.Flow.StaveNote({ keys: ["b/4"], duration: "qr"}),
@@ -70,6 +72,8 @@ if (counter == 0){
 
   	counter = 0;
   	theNotes = [];
+  	canvas = jQuery(".notesCanvas")[++measureCounter];
+  
   }
 
 
