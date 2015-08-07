@@ -1,26 +1,29 @@
-var canvas;
-var renderer;
-var ctx;
-var stave;
-var notes;
-var voice;
-var formatter;
-var counter=0;
-var theNotes = [];
-
 jQuery(document).ready(function(){
+	var canvas;
+	var renderer;
+	var newCtx;
+	var stave;
+	var notes;
+	var voice;
+	var formatter;
+	var counter=0;
+	var theNotes = [];
 
-canvas = jQuery("#notesCanvas")[0];
 
-window.musicMaker = function(note){
-	theNotes.push(note)
+var canvas = jQuery("#notesCanvas")[0];
+
+window.updateMeasure = function(note, octave){
+	console.log(note, octave);
+	if(!octave) octave = "4";
+	theNotes.push(note.toLowerCase() + "/" + octave + "")
 	counter ++
 	renderer = new Vex.Flow.Renderer(canvas,
     Vex.Flow.Renderer.Backends.CANVAS);
 
-  ctx = renderer.getContext();
+  newCtx = renderer.getContext();
+	  newCtx.clearRect(0, 0, canvas.width, canvas.height);
    stave = new Vex.Flow.Stave(10, 0, 500);
-  stave.addClef("treble").setContext(ctx).draw();
+  stave.addClef("treble").setContext(newCtx).draw();
 if (counter == 0){
   notes = [
   	new Vex.Flow.StaveNote({ keys: ["b/4"], duration: "qr"}),
@@ -32,7 +35,7 @@ if (counter == 0){
 
   if (counter == 1){
   	  notes = [
-  	new Vex.Flow.StaveNote({ keys: [theNotes[0].toLowerCase()+"/4"], duration: "q"}),
+  	new Vex.Flow.StaveNote({ keys: [theNotes[0]], duration: "q"}),
   		new Vex.Flow.StaveNote({ keys: ["b/4"], duration: "qr"}),
   			new Vex.Flow.StaveNote({ keys: ["b/4"], duration: "qr"}),
   				new Vex.Flow.StaveNote({ keys: ["b/4"], duration: "qr"})
@@ -41,8 +44,8 @@ if (counter == 0){
 
    if (counter == 2){
   	  notes = [
-  	new Vex.Flow.StaveNote({ keys: [theNotes[0].toLowerCase()+"/4"], duration: "q"}),
-  		new Vex.Flow.StaveNote({ keys: [theNotes[1].toLowerCase()+"/4"], duration: "q"}),
+  	new Vex.Flow.StaveNote({ keys: [theNotes[0]], duration: "q"}),
+  		new Vex.Flow.StaveNote({ keys: [theNotes[1]], duration: "q"}),
   			new Vex.Flow.StaveNote({ keys: ["b/4"], duration: "qr"}),
   				new Vex.Flow.StaveNote({ keys: ["b/4"], duration: "qr"})
   	]
@@ -51,19 +54,22 @@ if (counter == 0){
 
    if (counter == 3){
   	  notes = [
-  	new Vex.Flow.StaveNote({ keys: [theNotes[0].toLowerCase()+"/4"], duration: "q"}),
-  		new Vex.Flow.StaveNote({ keys: [theNotes[1].toLowerCase()+"/4"], duration: "q"}),
-  			new Vex.Flow.StaveNote({ keys: [theNotes[2].toLowerCase()+"/4"], duration: "q"}),
+  	new Vex.Flow.StaveNote({ keys: [theNotes[0]], duration: "q"}),
+  		new Vex.Flow.StaveNote({ keys: [theNotes[1]], duration: "q"}),
+  			new Vex.Flow.StaveNote({ keys: [theNotes[2]], duration: "q"}),
   				new Vex.Flow.StaveNote({ keys: ["b/4"], duration: "qr"})
   	]
   }
    if (counter == 4){
   	  notes = [
-  	new Vex.Flow.StaveNote({ keys: [theNotes[0].toLowerCase()+"/4"], duration: "q"}),
-  		new Vex.Flow.StaveNote({ keys: [theNotes[1].toLowerCase()+"/4"], duration: "q"}),
-  			new Vex.Flow.StaveNote({ keys: [theNotes[2].toLowerCase()+"/4"], duration: "q"}),
-  				new Vex.Flow.StaveNote({ keys: [theNotes[3].toLowerCase()+"/4"], duration: "q"})
+  	new Vex.Flow.StaveNote({ keys: [theNotes[0]], duration: "q"}),
+  		new Vex.Flow.StaveNote({ keys: [theNotes[1]], duration: "q"}),
+  			new Vex.Flow.StaveNote({ keys: [theNotes[2]], duration: "q"}),
+  				new Vex.Flow.StaveNote({ keys: [theNotes[3]], duration: "q"})
   	]
+
+  	counter = 0;
+  	theNotes = [];
   }
 
 
@@ -103,11 +109,12 @@ if (counter == 0){
     joinVoices([voice]).format([voice], 500);
 
   // Render voice
-  voice.draw(ctx, stave);
+  voice.draw(newCtx, stave);
+
 
 }
 
-musicMaker("C")
+updateMeasure("C")
         
 
 
