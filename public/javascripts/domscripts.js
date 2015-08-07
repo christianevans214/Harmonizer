@@ -14,6 +14,17 @@ jQuery(document).ready(function() {
   var canvas = jQuery(".notesCanvas")[0];
   console.log(canvas);
 
+  function addNewMeasure(measureCounter) {
+    var canvas = document.createElement('canvas');
+    canvas.width = 511;
+    canvas.height = 125;
+    canvas.className = "notesCanvas";
+    // canvas.
+    var sheetDiv = document.getElementById("sheet");
+    sheetDiv.appendChild(canvas);
+
+  }
+
   function makeStaff(noteCounter, Notes) {
     var inputArr = [Notes[0] || "b/4", Notes[1] || "b/4", Notes[2] || "b/4", Notes[3] || "b/4"];
     var restArr = []
@@ -36,6 +47,7 @@ jQuery(document).ready(function() {
     if (noteCounter === 4) {
       counter = 0;
       theNotes = [];
+      addNewMeasure(measureCounter);
       canvas = jQuery(".notesCanvas")[++measureCounter];
     }
     return toReturn;
@@ -77,7 +89,7 @@ jQuery(document).ready(function() {
 
   }
 
-  updateMeasure("C")
+  // updateMeasure("C")
 
 
 
