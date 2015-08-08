@@ -11,10 +11,14 @@ jQuery(document).ready(function() {
   var voice;
   var formatter;
   var counter = 0;
-  //maybe the Notes should be an array of Objects with each object being like {note: ____, duration: _____}
+  //maybe the Notes should be an array of Objects with each object being like {note: ____, duration: _____, mathDur:____(fraction)}
+  //{note: "b/4",duration: '8r', mathDur: .125}
   var theNotes = [];
   var measureCounter = 1;
-  var NOTE_DURATIONS = ["8", "q", "h", "w"];
+  //note durations as string. between half and dotted half, we'll need to split the notes into two. mathDur is .625 (half and eighth)
+  var NOTE_DURATIONS = ["8", "q", 'qd', "h", 'hd', "w"];
+  //the fraction value for all notes above. Note sure if we'll need this.
+  var NOTE_MATH = [.125, .25, .375, .5, .75, 1];
 
 
   var canvas = jQuery(".notesCanvas")[0];
@@ -31,31 +35,140 @@ jQuery(document).ready(function() {
 
   }
 
-  function makeStaff(noteCounter, Notes) {
-    var inputArr = [Notes[0] || "b/4", Notes[1] || "b/4", Notes[2] || "b/4", Notes[3] || "b/4", Notes[4] || "b/4", Notes[5] || "b/4", Notes[6] || "b/4", Notes[7] || "b/4"];
-    var toReturn = [];
-    inputArr.forEach(function(note, i) {
-      var letter = note.split('/')[0];
-      if (letter[letter.length - 1] === "#") {
-        toReturn.push(new Vex.Flow.StaveNote({
-          keys: [note],
-          duration: noteCounter - 1 >= i ? "8" : "8r"
-        }).addAccidental(0, new Vex.Flow.Accidental("#")))
+  // function makeStaff(noteCounter, Notes) {
+  //   var inputArr = [Notes[0] || "b/4", Notes[1] || "b/4", Notes[2] || "b/4", Notes[3] || "b/4", Notes[4] || "b/4", Notes[5] || "b/4", Notes[6] || "b/4", Notes[7] || "b/4"];
+  //   var toReturn = [];
+  //   inputArr.forEach(function(note, i) {
+  //     var letter = note.split('/')[0];
+  //     if (letter[letter.length - 1] === "#") {
+  //       toReturn.push(new Vex.Flow.StaveNote({
+  //         keys: [note],
+  //         duration: noteCounter - 1 >= i ? "8" : "8r"
+  //       }).addAccidental(0, new Vex.Flow.Accidental("#")))
+  //     } else {
+  //       toReturn.push(new Vex.Flow.StaveNote({
+  //         keys: [note],
+  //         duration: noteCounter - 1 >= i ? "8" : "8r"
+  //       }))
+  //     }
+  //   })
+  //   if (noteCounter === 8) {
+  //     counter = 0;
+  //     theNotes = [];
+  //     addNewMeasure(measureCounter);
+  //     canvas = jQuery(".notesCanvas")[measureCounter++];
+  //   }
+  //   return toReturn;
+  // }
+
+  //check if it's a repeat but not the first note
+  //find the latest note in the notes array, combine it with the previous note in array --> get numerical values
+
+  function makeStaff(repeatNote, noteCounter, notes) {
+    //note needs to be a repeat but can't be repeating from previous measure.
+    console.log("INFO INTAKE IN MAKE STAFF", notes[notes.length - 1], noteCounter, repeatNote);
+    if (repeatNote && noteCounter > 1) {
+      // console.log("NOTES IN MAKE STAFF", notes[notes.length - 1]);
+      var notePitch = notes[notes.length - 1].note;
+      var newNoteVal = notes[notes.length - 1].mathDur + notes[notes.length - 2].mathDur;
+      console.log(newNoteVal);
+      //inner if/else statements to handle making new notes.
+      //.625 is a half note and eighth note (.5 + .125)
+      if (newNoteVal === .625) {
+        var newHalfNote = {
+          note: notePitch,
+          duration: 'h',
+          mathDur: .5
+        }
+        var newEighthNote = {
+          note: notePitch,
+          duration: '8',
+          mathDur: .125
+        }
+        notes.splice(-2)
+        notes.push(newHalfNote);
+        notes.push(newEighthNote);
+        //need to make createNotes function
+        return createNotes(notes);
+        //.875 is a dotted half note and eighth note (.75 + .125)
+      } else if (newNoteVal === .875) {
+        var newDottedHalf = {
+          note: notePitch,
+          duration: 'hd',
+          mathDur: .75
+        }
+        var newEighthNote = {
+          note: notePitch,
+          duration: '8',
+          mathDur: .125
+        }
+        notes.splice(-2);
+        notes.push(newHalfNote);
+        notes.push(newEighthNote);
+        return createNotes(notes);
       } else {
-        toReturn.push(new Vex.Flow.StaveNote({
-          keys: [note],
-          duration: noteCounter - 1 >= i ? "8" : "8r"
-        }))
+        var newDuration = NOTE_DURATIONS[NOTE_MATH.indexOf(newNoteVal)];
+        console.log("NEW DURATION", newDuration)
+          //in case this doesn't work how I hoped.
+        if (newDuration === undefined) {
+          console.log("ERR WITH NOTE VAL", newNoteVal);
+          throw new Error("problematic newNoteVal");
+        }
+        var newNote = {
+          note: notePitch,
+          duration: newDuration,
+          mathDur: newNoteVal
+        }
+        notes.splice(-2);
+        notes.push(newNote);
+        return createNotes(notes);
       }
+
+    } else {
+      //not a repeat or first note. Just take all the notes, and tack rests onto the end with createNotes(notes)
+      return createNotes(notes);
+    }
+  }
+
+  // toReturn.push(new Vex.Flow.StaveNote({
+  //         keys: [note],
+  //         duration: noteCounter - 1 >= i ? "8" : "8r"
+  //       }))
+  function createNotes(noteArr) {
+    var arrToReturn = [];
+    var totalNotesMeasureVal = noteArr.reduce(function(curVal, nextNote) {
+      return curVal + nextNote.mathDur;
+    }, 0)
+    var numOfEighthRests = (1 - totalNotesMeasureVal) / .125;
+    console.log("NOTE ARR", noteArr);
+    console.log("TOTAL NOTES MEASURE VAL", totalNotesMeasureVal);
+
+    console.log("NUM OF EIGHTH RESTS", numOfEighthRests);
+    if (totalNotesMeasureVal > 1) {
+      throw new Error("exceeding max measure values")
+    }
+    noteArr.forEach(function(note) {
+      arrToReturn.push(new Vex.Flow.StaveNote({
+        keys: [note.note],
+        duration: note.duration
+      }))
     })
-    if (noteCounter === 8) {
+    for (var i = 0; i < numOfEighthRests; i++) {
+      arrToReturn.push(new Vex.Flow.StaveNote({
+        keys: ["b/4"],
+        duration: "8r"
+      }))
+    }
+    if (numOfEighthRests === 0) {
       counter = 0;
       theNotes = [];
       addNewMeasure(measureCounter);
       canvas = jQuery(".notesCanvas")[measureCounter++];
     }
-    return toReturn;
+    return arrToReturn;
   }
+
+
   window.restartSong = function() {
     measureCounter = 0;
     theNotes = [];
@@ -68,7 +181,11 @@ jQuery(document).ready(function() {
   }
   window.updateMeasure = function(note, octave) {
     if (!octave) octave = "4";
-    theNotes.push(note.toLowerCase() + "/" + octave + "")
+    theNotes.push({
+      note: note.toLowerCase() + "/" + octave + "",
+      duration: '8',
+      mathDur: .125
+    })
     counter++
     renderer = new Vex.Flow.Renderer(canvas,
       Vex.Flow.Renderer.Backends.CANVAS);
@@ -80,9 +197,9 @@ jQuery(document).ready(function() {
 
 
     //here's where we make the notes...maybe around here we can invoke an optional new function if the pitch is the same?
-    notes = makeStaff(counter, theNotes);
+    notes = makeStaff(repeatedNote, counter, theNotes);
 
-
+    console.log(notes);
     // Create a voice in 4/4
     voice = new Vex.Flow.Voice({
       num_beats: 4,
@@ -103,41 +220,6 @@ jQuery(document).ready(function() {
 
   }
 
-  // var drums = {
-  //   kick: "x",
-  //   snare: "o",
-  //   close: "*",
-  //   open: "-",
-  //   rest: "\."
-  // }
-
-  // var drumKeys = Object.keys(drums)
-  // var oneCount = 0
-  // var twoCount = 0
-  // var threeCount = 0
-  // var fourCount = 0
-  // var fiveCount = 0
-  // var sixCount = 0
-  // var sevenCount = 0
-  // var eightCount = 0
-
-  // var changeDrums = function(num, counter) {
-  //   jQuery("#" + num).click(function() {
-  //     jQuery(this).text(drumKeys[counter++])
-  //     editStr(num - 1, drums[drumKeys[counter - 1]])
-
-  //     if (counter === drumKeys.length) counter = 0;
-  //   });
-  // }
-
-  // changeDrums(1, oneCount);
-  // changeDrums(2, twoCount)
-  // changeDrums(3, threeCount)
-  // changeDrums(4, fourCount)
-  // changeDrums(5, fiveCount)
-  // changeDrums(6, sixCount)
-  // changeDrums(7, sevenCount)
-  // changeDrums(8, eightCount)
 
   //DOM EVENT EMITTERS
   stopPlaying();
