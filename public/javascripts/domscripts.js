@@ -158,15 +158,13 @@ jQuery(document).ready(function() {
     if (numOfEighthRests === 0) {
       counter = 0;
       theNotes = [];
+      //If currently in editing mode, it'll set isEditing to false to end the cycle, return the measureCounter to where it was BEFORe
+      //editing, and select the last canvas in the div.
       if (isEditing) {
         isEditing = false;
         measureCounter = measureToReturn;
         canvas = jQuery(".notesCanvas")[measureCounter - 1];
         playOption = "stop";
-        // console.log("MEASURE COUNTER IN MEASURE EDITOR", measureCounter);
-        // console.log("ALL CANVASES?", jQuery('.notesCanvas'));
-        // console.log("CANVAS RETURNED TO", canvas);
-
       } else {
         addNewMeasure(measureCounter);
         canvas = jQuery(".notesCanvas")[measureCounter++];
@@ -190,7 +188,8 @@ jQuery(document).ready(function() {
   }
 
   //Function to edit the measure. CAN ONLY BE RUN IF YOu'RE NOT RECORDING FIRST.
-  //It'll start playing, allow you to re-sing the measure, and when you're done it'll stop the singing.
+  //It'll start playing, allow you to re-sing the measure, and when you're done it'll stop the recording.
+  //Works by setting the measureCounter to the id of the canvas clicked, while saving the measureToReturn for later use.
   window.editMeasure = function(id) {
     playOption = "play";
     isEditing = true;
@@ -198,7 +197,6 @@ jQuery(document).ready(function() {
     measureCounter = id;
     theNotes = [];
     counter = 0;
-    // playOption = "stop";
     canvas = jQuery(".notesCanvas")[measureCounter];
   }
 
