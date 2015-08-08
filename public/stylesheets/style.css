@@ -8,7 +8,7 @@ a {
 }
 
 
-.drum{
+/*.drum{
 	display: inline-block;
 	font: 20px "Monaco";
 	border: 1px solid black;
@@ -18,4 +18,18 @@ a {
 .drum:hover{
 	background: grey;
 	cursor: pointer;
+}*/
+
+.songInfo{
+	margin-top: 5%;
+	text-align: center;
+}
+.tempo-and-composer-and-timeMade{
+	margin-right: 10%;
+	text-align: left;
+	float:right;
+}
+#sheet{
+	text-align: center;
+	clear: both;
 }

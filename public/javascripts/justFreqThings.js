@@ -91,9 +91,10 @@ var recalcAvg = function(newFreq, curAvg, count) {
 var curNote;
 
 function draw() {
+	// console.log(new Date())
 	var timeDomain = fft.waveform(2048, 'float32');
 	var corrBuff = autoCorrelate(timeDomain);
-	if (mic.getLevel() > 0.13) {
+	if (mic.getLevel() > 0.01) {
 		var freq = findFrequency(corrBuff);
 		note = noteFromPitch(freq);
 		if (curNote === note) {
