@@ -158,15 +158,26 @@ jQuery(document).ready(function() {
     if (numOfEighthRests === 0) {
       counter = 0;
       theNotes = [];
-      addNewMeasure(measureCounter);
-      canvas = jQuery(".notesCanvas")[measureCounter++];
+      if (isEditing) {
+        isEditing = false;
+        measureCounter = measureToReturn;
+        canvas = jQuery(".notesCanvas")[measureCounter - 1];
+        playOption = "stop";
+        // console.log("MEASURE COUNTER IN MEASURE EDITOR", measureCounter);
+        // console.log("ALL CANVASES?", jQuery('.notesCanvas'));
+        // console.log("CANVAS RETURNED TO", canvas);
+
+      } else {
+        addNewMeasure(measureCounter);
+        canvas = jQuery(".notesCanvas")[measureCounter++];
+      }
     }
 
     //returns the vexFlowArray we added all the vex stavenotes to.
     return vexFlowArray;
   }
 
-  //function that creates a new measure and appends to the #sheet div.
+  //Function that creates a new measure and appends to the #sheet div.
   function addNewMeasure(measureCounter) {
     var canvas = document.createElement('canvas');
     canvas.width = 511;
@@ -176,6 +187,19 @@ jQuery(document).ready(function() {
     var sheetDiv = document.getElementById("sheet");
     sheetDiv.appendChild(canvas);
 
+  }
+
+  //Function to edit the measure. CAN ONLY BE RUN IF YOu'RE NOT RECORDING FIRST.
+  //It'll start playing, allow you to re-sing the measure, and when you're done it'll stop the singing.
+  window.editMeasure = function(id) {
+    playOption = "play";
+    isEditing = true;
+    measureToReturn = measureCounter;
+    measureCounter = id;
+    theNotes = [];
+    counter = 0;
+    // playOption = "stop";
+    canvas = jQuery(".notesCanvas")[measureCounter];
   }
 
   //If restart button is hit, this function is called. It will reset like...everything...and empty the #sheet div except for one new canvas
@@ -270,6 +294,8 @@ jQuery(document).ready(function() {
 
 
 //DOM EVENT EMITTERS DEFINED
+
+//Stop Button
 function stopPlaying() {
   jQuery('.stop').on('click', function() {
     playOption = "stop";
@@ -277,6 +303,7 @@ function stopPlaying() {
   })
 }
 
+//Start Button
 function startPlaying() {
   jQuery('.play').on('click', function() {
     playOption = "play";
@@ -284,6 +311,7 @@ function startPlaying() {
   })
 }
 
+//Restart Button
 function restartPlaying() {
   jQuery('.restart').on('click', function() {
     restartSong();
@@ -291,20 +319,10 @@ function restartPlaying() {
   })
 }
 
-//TRIED TO MAKE EDITABLE MEASURES BUT DIDN'T WORK
-
-// function clickToEdit() {
-//   jQuery("#sheet").on('click', ".notesCanvas", function() {
-//     console.log("ID", this.id);
-//     measureToReturn = measureCounter;
-//     repeatedNote = false;
-//     editingMeasure = this.id;
-//     measureCounter = this.id;
-//     canvas = jQuery('.notesCanvas')[this.id];
-//     console.log("EDIT CANVAS", canvas);
-//     console.log
-//     isEditing = true;
-//     counter = 0;
-//     theNotes = [];
-//   })
-// }
+//Click on an individual canvas box. IF you're not recording it'll allow you to edit a certain measure.
+function clickToEdit() {
+  jQuery("#sheet").on('click', ".notesCanvas", function() {
+    console.log("ID", this.id);
+    if (playOption === "stop") editMeasure(this.id);
+  })
+}
