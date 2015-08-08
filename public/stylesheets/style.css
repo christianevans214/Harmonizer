@@ -38,3 +38,6 @@ a {
 	float: left;
 	margin-left: 5%;
 }
+.title {
+	display: inline-block;
+}
