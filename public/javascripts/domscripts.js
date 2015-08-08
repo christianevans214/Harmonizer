@@ -1,9 +1,14 @@
 var playOption = "stop"
-  //a boolean altered on justFreqThings file at lines 102/104 depending on whether note
-  //is a repeated one (sustained)
+var isEditing = false;
+//a boolean altered on justFreqThings file at lines 102/104 depending on whether note
+//is a repeated one (sustained)
 var repeatedNote = false;
+var measureToReturn;
+var measureCounter;
+var editingMeasure;
+var theNotes = [];
+// var canvas;
 jQuery(document).ready(function() {
-  var canvas;
   var renderer;
   var newCtx;
   var stave;
@@ -13,8 +18,7 @@ jQuery(document).ready(function() {
   var counter = 0;
   //maybe the Notes should be an array of Objects with each object being like {note: ____, duration: _____, mathDur:____(fraction)}
   //{note: "b/4",duration: '8r', mathDur: .125}
-  var theNotes = [];
-  var measureCounter = 1;
+  measureCounter = 1;
   //note durations as string. between half and dotted half, we'll need to split the notes into two. mathDur is .625 (half and eighth)
   var NOTE_DURATIONS = ["8", "q", 'qd', "h", 'hd', "w"];
   //the fraction value for all notes above. Note sure if we'll need this.
@@ -35,39 +39,11 @@ jQuery(document).ready(function() {
 
   }
 
-  // function makeStaff(noteCounter, Notes) {
-  //   var inputArr = [Notes[0] || "b/4", Notes[1] || "b/4", Notes[2] || "b/4", Notes[3] || "b/4", Notes[4] || "b/4", Notes[5] || "b/4", Notes[6] || "b/4", Notes[7] || "b/4"];
-  //   var toReturn = [];
-  //   inputArr.forEach(function(note, i) {
-  //     var letter = note.split('/')[0];
-  //     if (letter[letter.length - 1] === "#") {
-  //       toReturn.push(new Vex.Flow.StaveNote({
-  //         keys: [note],
-  //         duration: noteCounter - 1 >= i ? "8" : "8r"
-  //       }).addAccidental(0, new Vex.Flow.Accidental("#")))
-  //     } else {
-  //       toReturn.push(new Vex.Flow.StaveNote({
-  //         keys: [note],
-  //         duration: noteCounter - 1 >= i ? "8" : "8r"
-  //       }))
-  //     }
-  //   })
-  //   if (noteCounter === 8) {
-  //     counter = 0;
-  //     theNotes = [];
-  //     addNewMeasure(measureCounter);
-  //     canvas = jQuery(".notesCanvas")[measureCounter++];
-  //   }
-  //   return toReturn;
-  // }
-
-  //check if it's a repeat but not the first note
-  //find the latest note in the notes array, combine it with the previous note in array --> get numerical values
 
   function makeStaff(repeatNote, noteCounter, notes) {
     //note needs to be a repeat but can't be repeating from previous measure.
     console.log("INFO INTAKE IN MAKE STAFF", notes[notes.length - 1], noteCounter, repeatNote);
-    if (repeatNote && noteCounter > 1 && notes.duration !== "8r") {
+    if (repeatNote && noteCounter > 1 && notes[notes.length - 1].duration !== "8r") {
       // console.log("NOTES IN MAKE STAFF", notes[notes.length - 1]);
       var notePitch = notes[notes.length - 1].note;
       var newNoteVal = notes[notes.length - 1].mathDur + notes[notes.length - 2].mathDur;
@@ -184,7 +160,6 @@ jQuery(document).ready(function() {
     return arrToReturn;
   }
 
-
   window.restartSong = function() {
     measureCounter = 0;
     theNotes = [];
@@ -196,6 +171,11 @@ jQuery(document).ready(function() {
 
   }
   window.updateMeasure = function(note, octave) {
+    if (octave === 0 && note === 0) {
+      jQuery(".pitch").text("[-]");
+    } else {
+      jQuery(".pitch").text("[" + note + "/" + octave + "]")
+    }
     if (!octave) octave = "4";
     if (note === 0) theNotes.push({
       note: "b/4",
@@ -248,6 +228,7 @@ jQuery(document).ready(function() {
   stopPlaying();
   startPlaying();
   restartPlaying();
+  clickToEdit();
 })
 
 // var drumStr = 'x*o-'
@@ -282,3 +263,19 @@ function restartPlaying() {
     console.log("PLAY OPTION", playOption);
   })
 }
+
+// function clickToEdit() {
+//   jQuery("#sheet").on('click', ".notesCanvas", function() {
+//     console.log("ID", this.id);
+//     measureToReturn = measureCounter;
+//     repeatedNote = false;
+//     editingMeasure = this.id;
+//     measureCounter = this.id;
+//     canvas = jQuery('.notesCanvas')[this.id];
+//     console.log("EDIT CANVAS", canvas);
+//     console.log
+//     isEditing = true;
+//     counter = 0;
+//     theNotes = [];
+//   })
+// }
