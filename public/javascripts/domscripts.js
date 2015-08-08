@@ -71,7 +71,7 @@ jQuery(document).ready(function() {
       // console.log("NOTES IN MAKE STAFF", notes[notes.length - 1]);
       var notePitch = notes[notes.length - 1].note;
       var newNoteVal = notes[notes.length - 1].mathDur + notes[notes.length - 2].mathDur;
-      console.log(newNoteVal);
+      // console.log(newNoteVal);
       //inner if/else statements to handle making new notes.
       //.625 is a half note and eighth note (.5 + .125)
       if (newNoteVal === .625) {
@@ -108,10 +108,10 @@ jQuery(document).ready(function() {
         return createNotes(notes);
       } else {
         var newDuration = NOTE_DURATIONS[NOTE_MATH.indexOf(newNoteVal)];
-        console.log("NEW DURATION", newDuration)
-          //in case this doesn't work how I hoped.
+        // console.log("NEW DURATION", newDuration)
+        //in case this doesn't work how I hoped.
         if (newDuration === undefined) {
-          console.log("ERR WITH NOTE VAL", newNoteVal);
+          // console.log("ERR WITH NOTE VAL", newNoteVal);
           throw new Error("problematic newNoteVal");
         }
         var newNote = {
@@ -140,18 +140,34 @@ jQuery(document).ready(function() {
       return curVal + nextNote.mathDur;
     }, 0)
     var numOfEighthRests = (1 - totalNotesMeasureVal) / .125;
-    console.log("NOTE ARR", noteArr);
-    console.log("TOTAL NOTES MEASURE VAL", totalNotesMeasureVal);
+    // console.log("NOTE ARR", noteArr);
+    // console.log("TOTAL NOTES MEASURE VAL", totalNotesMeasureVal);
 
-    console.log("NUM OF EIGHTH RESTS", numOfEighthRests);
+    // console.log("NUM OF EIGHTH RESTS", numOfEighthRests);
     if (totalNotesMeasureVal > 1) {
       throw new Error("exceeding max measure values")
     }
     noteArr.forEach(function(note) {
-      arrToReturn.push(new Vex.Flow.StaveNote({
-        keys: [note.note],
-        duration: note.duration
-      }))
+      var noteToPush;
+      var hasSharp = note.note.split('/')[0][note.note.split('/')[0].length - 1] === "#";
+      var hasAccidental = note.duration[note.duration.length - 1] === "d";
+      console.log("HAS SHARP", hasSharp);
+      console.log("HAS ACCIDENTAL", hasAccidental);
+      if (hasSharp) {
+        noteToPush = new Vex.Flow.StaveNote({
+          keys: [note.note],
+          duration: note.duration
+        }).addAccidental(0, new Vex.Flow.Accidental("#"))
+      } else {
+        noteToPush = new Vex.Flow.StaveNote({
+          keys: [note.note],
+          duration: note.duration
+        })
+      }
+      if (hasAccidental) {
+        noteToPush = noteToPush.addDotToAll()
+      }
+      arrToReturn.push(noteToPush);
     })
     for (var i = 0; i < numOfEighthRests; i++) {
       arrToReturn.push(new Vex.Flow.StaveNote({
@@ -199,7 +215,7 @@ jQuery(document).ready(function() {
     //here's where we make the notes...maybe around here we can invoke an optional new function if the pitch is the same?
     notes = makeStaff(repeatedNote, counter, theNotes);
 
-    console.log(notes);
+    // console.log(notes);
     // Create a voice in 4/4
     voice = new Vex.Flow.Voice({
       num_beats: 4,
@@ -242,20 +258,20 @@ jQuery(document).ready(function() {
 function stopPlaying() {
   jQuery('.stop').on('click', function() {
     playOption = "stop";
-    console.log("PLAY OPTION");
+    console.log("PLAY OPTION", playOption);
   })
 }
 
 function startPlaying() {
   jQuery('.play').on('click', function() {
     playOption = "play";
-    console.log("PLAY OPTION");
+    console.log("PLAY OPTION", playOption);
   })
 }
 
 function restartPlaying() {
   jQuery('.restart').on('click', function() {
     restartSong();
-    console.log("PLAY OPTION");
+    console.log("PLAY OPTION", playOption);
   })
 }
