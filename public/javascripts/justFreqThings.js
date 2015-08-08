@@ -104,7 +104,9 @@ function draw() {
 				// newRoot(noteStrings[note % 12]);
 			curNote = note;
 			console.log("octave?", note, note / 12, Math.floor(note / 12));
-			updateMeasure(noteStrings[note % 12], Math.floor(note / 12))
+			console.log(playOption);
+			if (playOption === "play") updateMeasure(noteStrings[note % 12], Math.floor(note / 12))
+				// if (playOption === "restart") restartSong();
 		}
 		note = noteFromPitch(freq);
 		console.log(noteStrings[note % 12])

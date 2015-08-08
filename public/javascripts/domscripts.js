@@ -1,3 +1,4 @@
+var playOption = "stop"
 jQuery(document).ready(function() {
   var canvas;
   var renderer;
@@ -19,6 +20,11 @@ jQuery(document).ready(function() {
     canvas.width = 511;
     canvas.height = 125;
     canvas.className = "notesCanvas";
+    console.log("MEASURE COUNTER", measureCounter);
+    console.log("NEW CANVAS", canvas);
+    canvas.id = String(measureCounter + 1);
+    // canvas.className += " " + measureCounter.toString();
+    // canvas.id = String(measureCounter);
     // canvas.
     var sheetDiv = document.getElementById("sheet");
     sheetDiv.appendChild(canvas);
@@ -27,6 +33,8 @@ jQuery(document).ready(function() {
 
   function makeStaff(noteCounter, Notes) {
     var inputArr = [Notes[0] || "b/4", Notes[1] || "b/4", Notes[2] || "b/4", Notes[3] || "b/4"];
+    // var inputArr = [0, 0, 0, 0, 0, 0, 0, 0];
+    console.log(inputArr);
     var restArr = []
     console.log(inputArr);
     var toReturn = [];
@@ -51,6 +59,21 @@ jQuery(document).ready(function() {
       canvas = jQuery(".notesCanvas")[++measureCounter];
     }
     return toReturn;
+  }
+  window.restartSong = function() {
+    measureCounter = 0;
+    theNotes = [];
+    counter = 0;
+    playOption = "play";
+    jQuery('#sheet').empty();
+    var canvas = document.createElement('canvas');
+    canvas.width = 511;
+    canvas.height = 125;
+    canvas.className = "notesCanvas";
+    canvas.id = "0";
+    var sheetDiv = document.getElementById("sheet");
+    sheetDiv.appendChild(canvas);
+
   }
   window.updateMeasure = function(note, octave) {
     console.log(note, octave);
@@ -159,6 +182,12 @@ jQuery(document).ready(function() {
   changeDrums(6, sixCount)
   changeDrums(7, sevenCount)
   changeDrums(8, eightCount)
+
+
+  //DOM EVENT EMITTERS
+  stopPlaying();
+  startPlaying();
+  restartPlaying();
 })
 
 var drumStr = 'x*o-'
@@ -171,4 +200,25 @@ function editStr(idx, char) {
   console.log(drumStr)
   drums.kill();
   drums = EDrums(drumStr);
+}
+
+function stopPlaying() {
+  jQuery('.stop').on('click', function() {
+    playOption = "stop";
+    console.log("PLAY OPTION");
+  })
+}
+
+function startPlaying() {
+  jQuery('.play').on('click', function() {
+    playOption = "play";
+    console.log("PLAY OPTION");
+  })
+}
+
+function restartPlaying() {
+  jQuery('.restart').on('click', function() {
+    restartSong();
+    console.log("PLAY OPTION");
+  })
 }
