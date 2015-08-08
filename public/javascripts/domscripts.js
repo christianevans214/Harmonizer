@@ -32,7 +32,7 @@ jQuery(document).ready(function() {
   }
 
   function makeStaff(noteCounter, Notes) {
-    var inputArr = [Notes[0] || "b/4", Notes[1] || "b/4", Notes[2] || "b/4", Notes[3] || "b/4"];
+    var inputArr = [Notes[0] || "b/4", Notes[1] || "b/4", Notes[2] || "b/4", Notes[3] || "b/4", Notes[4] || "b/4", Notes[5] || "b/4", Notes[6] || "b/4", Notes[7] || "b/4"];
     // var inputArr = [0, 0, 0, 0, 0, 0, 0, 0];
     console.log(inputArr);
     var restArr = []
@@ -43,16 +43,16 @@ jQuery(document).ready(function() {
       if (letter[letter.length - 1] === "#") {
         toReturn.push(new Vex.Flow.StaveNote({
           keys: [note],
-          duration: noteCounter - 1 >= i ? "q" : "qr"
+          duration: noteCounter - 1 >= i ? "8" : "8r"
         }).addAccidental(0, new Vex.Flow.Accidental("#")))
       } else {
         toReturn.push(new Vex.Flow.StaveNote({
           keys: [note],
-          duration: noteCounter - 1 >= i ? "q" : "qr"
+          duration: noteCounter - 1 >= i ? "8" : "8r"
         }))
       }
     })
-    if (noteCounter === 4) {
+    if (noteCounter === 8) {
       counter = 0;
       theNotes = [];
       addNewMeasure(measureCounter);
