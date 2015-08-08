@@ -67,7 +67,7 @@ jQuery(document).ready(function() {
   function makeStaff(repeatNote, noteCounter, notes) {
     //note needs to be a repeat but can't be repeating from previous measure.
     console.log("INFO INTAKE IN MAKE STAFF", notes[notes.length - 1], noteCounter, repeatNote);
-    if (repeatNote && noteCounter > 1) {
+    if (repeatNote && noteCounter > 1 && notes.duration !== "8r") {
       // console.log("NOTES IN MAKE STAFF", notes[notes.length - 1]);
       var notePitch = notes[notes.length - 1].note;
       var newNoteVal = notes[notes.length - 1].mathDur + notes[notes.length - 2].mathDur;
@@ -197,11 +197,18 @@ jQuery(document).ready(function() {
   }
   window.updateMeasure = function(note, octave) {
     if (!octave) octave = "4";
-    theNotes.push({
-      note: note.toLowerCase() + "/" + octave + "",
-      duration: '8',
+    if (note === 0) theNotes.push({
+      note: "b/4",
+      duration: "8r",
       mathDur: .125
     })
+    else {
+      theNotes.push({
+        note: note.toLowerCase() + "/" + octave + "",
+        duration: '8',
+        mathDur: .125
+      })
+    }
     counter++
     renderer = new Vex.Flow.Renderer(canvas,
       Vex.Flow.Renderer.Backends.CANVAS);

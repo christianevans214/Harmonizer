@@ -115,6 +115,10 @@ function draw() {
 		}
 		note = noteFromPitch(freq);
 		console.log(noteStrings[note % 12])
+	} else {
+		if (playOption === "play") {
+			updateMeasure(0, 0)
+		}
 	}
 	//if there's a pause in your note singing, it'll stop repeating when you start again
 	repeatedNote = false;
