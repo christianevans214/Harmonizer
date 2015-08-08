@@ -9,7 +9,7 @@ jQuery(document).ready(function() {
   var formatter;
   var counter = 0;
   var theNotes = [];
-  var measureCounter = 0;
+  var measureCounter = 1;
 
 
   var canvas = jQuery(".notesCanvas")[0];
@@ -22,7 +22,7 @@ jQuery(document).ready(function() {
     canvas.className = "notesCanvas";
     console.log("MEASURE COUNTER", measureCounter);
     console.log("NEW CANVAS", canvas);
-    canvas.id = String(measureCounter + 1);
+    canvas.id = String(measureCounter);
     // canvas.className += " " + measureCounter.toString();
     // canvas.id = String(measureCounter);
     // canvas.
@@ -56,7 +56,7 @@ jQuery(document).ready(function() {
       counter = 0;
       theNotes = [];
       addNewMeasure(measureCounter);
-      canvas = jQuery(".notesCanvas")[++measureCounter];
+      canvas = jQuery(".notesCanvas")[measureCounter++];
     }
     return toReturn;
   }
@@ -64,15 +64,10 @@ jQuery(document).ready(function() {
     measureCounter = 0;
     theNotes = [];
     counter = 0;
-    playOption = "play";
+    playOption = "stop";
     jQuery('#sheet').empty();
-    var canvas = document.createElement('canvas');
-    canvas.width = 511;
-    canvas.height = 125;
-    canvas.className = "notesCanvas";
-    canvas.id = "0";
-    var sheetDiv = document.getElementById("sheet");
-    sheetDiv.appendChild(canvas);
+    addNewMeasure(measureCounter);
+    canvas = jQuery(".notesCanvas")[measureCounter++];
 
   }
   window.updateMeasure = function(note, octave) {
