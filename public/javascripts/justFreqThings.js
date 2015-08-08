@@ -108,10 +108,11 @@ function draw() {
 		//throws whistling octave range (6,7,8) into staff (3,4,5) octave range
 		if (playOption === "play") {
 			var octaveRange = Math.floor(note / 12);
+			var originalOctave = Math.floor(note / 12);
 			if (octaveRange === 6 || octaveRange === 7 || octaveRange === 8) {
 				octaveRange = octaveRange - 3;
 			}
-			updateMeasure(noteStrings[note % 12], octaveRange)
+			updateMeasure(noteStrings[note % 12], octaveRange, originalOctave)
 		}
 		note = noteFromPitch(freq);
 		console.log(noteStrings[note % 12])
