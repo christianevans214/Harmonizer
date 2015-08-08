@@ -99,15 +99,13 @@ function draw() {
 		note = noteFromPitch(freq);
 		if (curNote === note) {
 			console.log("on point")
+			repeatedNote = true;
 		} else {
-			console.log(noteStrings[note % 12])
-				// newRoot(noteStrings[note % 12]);
+			repeatedNote = false;
 			curNote = note;
-			console.log("octave?", note, note / 12, Math.floor(note / 12));
-			console.log(playOption);
-			if (playOption === "play") updateMeasure(noteStrings[note % 12], Math.floor(note / 12))
-				// if (playOption === "restart") restartSong();
 		}
+		console.log("info on note", note, note / 12, Math.floor(note / 12));
+		if (playOption === "play") updateMeasure(noteStrings[note % 12], Math.floor(note / 12))
 		note = noteFromPitch(freq);
 		console.log(noteStrings[note % 12])
 

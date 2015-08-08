@@ -1,4 +1,7 @@
 var playOption = "stop"
+  //a boolean altered on justFreqThings file at lines 102/104 depending on whether note
+  //is a repeated one (sustained)
+var repeatedNote = false;
 jQuery(document).ready(function() {
   var canvas;
   var renderer;
@@ -8,8 +11,10 @@ jQuery(document).ready(function() {
   var voice;
   var formatter;
   var counter = 0;
+  //maybe the Notes should be an array of Objects with each object being like {note: ____, duration: _____}
   var theNotes = [];
   var measureCounter = 1;
+  var NOTE_DURATIONS = ["8", "q", "h", "w"];
 
 
   var canvas = jQuery(".notesCanvas")[0];
@@ -20,12 +25,7 @@ jQuery(document).ready(function() {
     canvas.width = 511;
     canvas.height = 125;
     canvas.className = "notesCanvas";
-    console.log("MEASURE COUNTER", measureCounter);
-    console.log("NEW CANVAS", canvas);
     canvas.id = String(measureCounter);
-    // canvas.className += " " + measureCounter.toString();
-    // canvas.id = String(measureCounter);
-    // canvas.
     var sheetDiv = document.getElementById("sheet");
     sheetDiv.appendChild(canvas);
 
@@ -33,10 +33,6 @@ jQuery(document).ready(function() {
 
   function makeStaff(noteCounter, Notes) {
     var inputArr = [Notes[0] || "b/4", Notes[1] || "b/4", Notes[2] || "b/4", Notes[3] || "b/4", Notes[4] || "b/4", Notes[5] || "b/4", Notes[6] || "b/4", Notes[7] || "b/4"];
-    // var inputArr = [0, 0, 0, 0, 0, 0, 0, 0];
-    console.log(inputArr);
-    var restArr = []
-    console.log(inputArr);
     var toReturn = [];
     inputArr.forEach(function(note, i) {
       var letter = note.split('/')[0];
@@ -71,7 +67,6 @@ jQuery(document).ready(function() {
 
   }
   window.updateMeasure = function(note, octave) {
-    console.log(note, octave);
     if (!octave) octave = "4";
     theNotes.push(note.toLowerCase() + "/" + octave + "")
     counter++
@@ -83,6 +78,8 @@ jQuery(document).ready(function() {
     stave = new Vex.Flow.Stave(10, 0, 500);
     stave.addClef("treble").setContext(newCtx).draw();
 
+
+    //here's where we make the notes...maybe around here we can invoke an optional new function if the pitch is the same?
     notes = makeStaff(counter, theNotes);
 
 
@@ -92,7 +89,6 @@ jQuery(document).ready(function() {
       beat_value: 4,
       resolution: Vex.Flow.RESOLUTION
     });
-    console.log(voice)
 
     // Add notes to voice
     voice.addTickables(notes);
@@ -107,77 +103,41 @@ jQuery(document).ready(function() {
 
   }
 
-  // updateMeasure("C")
-
-
-
-  //note flight stuff
-
-  // 	NFClient.init(function(info) {
-  //     	alert("Noteflight API is ready, version " + info.version);
-  //   	});
-
-
-  //   var options = {
-  //     host: 'www.noteflight.com',
-  //     width: 800,
-  //     height: 400,
-  //     hidePlaybackControls: false,
-  //     viewParams: {
-  //       scale: 1.5,
-  //       role: 'template',
-  //       app: 'html5'
-  //     }
-  //   }
-
-  //   window.scoreView = new NFClient.ScoreView('score1', 'd482d5337aca77075c9a4329cdb1dbb0d6337ecb', options);
-  //   console.log(scoreView)
-
-
-  // function showScore(){
-  // 	console.log (scoreView.getScore())
+  // var drums = {
+  //   kick: "x",
+  //   snare: "o",
+  //   close: "*",
+  //   open: "-",
+  //   rest: "\."
   // }
 
+  // var drumKeys = Object.keys(drums)
+  // var oneCount = 0
+  // var twoCount = 0
+  // var threeCount = 0
+  // var fourCount = 0
+  // var fiveCount = 0
+  // var sixCount = 0
+  // var sevenCount = 0
+  // var eightCount = 0
 
+  // var changeDrums = function(num, counter) {
+  //   jQuery("#" + num).click(function() {
+  //     jQuery(this).text(drumKeys[counter++])
+  //     editStr(num - 1, drums[drumKeys[counter - 1]])
 
-  //
+  //     if (counter === drumKeys.length) counter = 0;
+  //   });
+  // }
 
-  var drums = {
-    kick: "x",
-    snare: "o",
-    close: "*",
-    open: "-",
-    rest: "\."
-  }
-
-  var drumKeys = Object.keys(drums)
-  var oneCount = 0
-  var twoCount = 0
-  var threeCount = 0
-  var fourCount = 0
-  var fiveCount = 0
-  var sixCount = 0
-  var sevenCount = 0
-  var eightCount = 0
-
-  var changeDrums = function(num, counter) {
-    jQuery("#" + num).click(function() {
-      jQuery(this).text(drumKeys[counter++])
-      editStr(num - 1, drums[drumKeys[counter - 1]])
-
-      if (counter === drumKeys.length) counter = 0;
-    });
-  }
-
-  changeDrums(1, oneCount);
-  changeDrums(2, twoCount)
-  changeDrums(3, threeCount)
-  changeDrums(4, fourCount)
-  changeDrums(5, fiveCount)
-  changeDrums(6, sixCount)
-  changeDrums(7, sevenCount)
-  changeDrums(8, eightCount)
-
+  // changeDrums(1, oneCount);
+  // changeDrums(2, twoCount)
+  // changeDrums(3, threeCount)
+  // changeDrums(4, fourCount)
+  // changeDrums(5, fiveCount)
+  // changeDrums(6, sixCount)
+  // changeDrums(7, sevenCount)
+  // changeDrums(8, eightCount)
 
   //DOM EVENT EMITTERS
   stopPlaying();
@@ -185,17 +145,17 @@ jQuery(document).ready(function() {
   restartPlaying();
 })
 
-var drumStr = 'x*o-'
+// var drumStr = 'x*o-'
 
-function editStr(idx, char) {
-  var strArr = drumStr.split('')
-  console.log(strArr)
-  strArr[idx] = char;
-  drumStr = strArr.join('')
-  console.log(drumStr)
-  drums.kill();
-  drums = EDrums(drumStr);
-}
+// function editStr(idx, char) {
+//   var strArr = drumStr.split('')
+//   console.log(strArr)
+//   strArr[idx] = char;
+//   drumStr = strArr.join('')
+//   console.log(drumStr)
+//   drums.kill();
+//   drums = EDrums(drumStr);
+// }
 
 function stopPlaying() {
   jQuery('.stop').on('click', function() {
