@@ -224,9 +224,9 @@ jQuery(document).ready(function() {
     
     //If/else statement to set the pitch on the page
     if (octave === 0 && note === 0) {
-      jQuery(".pitch").text("[-]");
+      jQuery(".pitch").text("N/A");
     } else {
-      jQuery(".pitch").text("[" + note + "/" + actualOctave + "]")
+      jQuery(".pitch").text(note + "/" + actualOctave)
     }
 
     //If for some reason no octave is give, set it equal to 4...Don't know why it would happen but hey it's a good catch and makes function
@@ -302,6 +302,7 @@ jQuery(document).ready(function() {
   startPlaying();
   restartPlaying();
   clickToEdit();
+  triggerPrint()
 })
 
 
@@ -309,7 +310,10 @@ jQuery(document).ready(function() {
 
 //Stop Button
 function stopPlaying() {
+  jQuery('.stop').hide()
   jQuery('.stop').on('click', function() {
+      jQuery(this).hide();
+      jQuery('.play').show();
     playOption = "stop";
     console.log("PLAY OPTION", playOption);
   })
@@ -318,6 +322,8 @@ function stopPlaying() {
 //Start Button
 function startPlaying() {
   jQuery('.play').on('click', function() {
+    jQuery(this).hide();
+    jQuery('.stop').show()
     playOption = "play";
     console.log("PLAY OPTION", playOption);
   })
@@ -331,6 +337,14 @@ function restartPlaying() {
   })
 }
 
+//print Button
+function triggerPrint(){
+  jQuery('#print').on('click', function(){
+    //this was a little ridiculous, p5 has a function of its own called print and puts it on the global scope.
+    //if you look in the html you'll see i stole window.print() away from p5 to use it here
+    grabPrintFunctionBeforeP5StealsIt()
+  })
+}
 //Click on an individual canvas box. IF you're not recording it'll allow you to edit a certain measure.
 function clickToEdit() {
   jQuery("#sheet").on('click', ".notesCanvas", function() {

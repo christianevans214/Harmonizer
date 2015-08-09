@@ -19,6 +19,10 @@ body {
   /*background: black;*/
 }
 
+#metro{
+	color: red;
+}
+
 .page{
 	height: 100%;
 }
@@ -31,10 +35,14 @@ a {
   color: #00B7FF;
 }
 
+.btn{
+	width: 100px;
+}
 
 #tempo{
 	width: 46px;
 }
+
 
 .header{
 	width: 100%;
@@ -91,10 +99,27 @@ a {
 	padding-right: 5px;
 }
 
-.buttons{
-	float: left;
-	margin-left: 5%;
+.label{
+	font-size: 12pt;
 }
+
+#print{
+	float: right;
+	margin-top: 40px;
+	margin-right: 10%;
+}
+
+.buttons{
+	display: inline-block;
+	margin-top: 20px;
+	margin-left: 10%;
+}
+
+.buttons h2{
+	display: inline-block;
+	font: 15px;
+}
+
 .title {
 	display: inline-block;
 }
