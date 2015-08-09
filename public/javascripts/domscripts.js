@@ -164,14 +164,15 @@ jQuery(document).ready(function() {
       theNotes = [];
       //If currently in editing mode, it'll set isEditing to false to end the cycle, return the measureCounter to where it was BEFORe
       //editing, and select the last canvas in the div.
+      
         // adds measure without clef for continuous lines
-      shouldContainClef = !shouldContainClef;
       if (isEditing) {
         isEditing = false;
         measureCounter = measureToReturn;
         canvas = jQuery(".notesCanvas")[measureCounter - 1];
         playOption = "stop";
       } else {
+        shouldContainClef = !shouldContainClef
         addNewMeasure(measureCounter);
         canvas = jQuery(".notesCanvas")[measureCounter++];
       }
@@ -203,6 +204,7 @@ jQuery(document).ready(function() {
     measureCounter = id;
     theNotes = [];
     counter = 0;
+    shouldContainClef = (id % 2 == 0)
     canvas = jQuery(".notesCanvas")[measureCounter];
   }
 
