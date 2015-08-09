@@ -164,6 +164,8 @@ jQuery(document).ready(function() {
       theNotes = [];
       //If currently in editing mode, it'll set isEditing to false to end the cycle, return the measureCounter to where it was BEFORe
       //editing, and select the last canvas in the div.
+        // adds measure without clef for continuous lines
+      shouldContainClef = !shouldContainClef;
       if (isEditing) {
         isEditing = false;
         measureCounter = measureToReturn;
@@ -217,6 +219,7 @@ jQuery(document).ready(function() {
   }
 
   //Function that does voice/canvas rendering and adds pitch to HTML (Should probably be separated at some point)
+  window.shouldContainClef = true;
   window.updateMeasure = function(note, octave, actualOctave) {
     
     //If/else statement to set the pitch on the page
@@ -259,7 +262,14 @@ jQuery(document).ready(function() {
 
     //Makes new stave, adds treble clef
     stave = new Vex.Flow.Stave(10, 0, 500);
+    if (shouldContainClef){
+      //measure with clef
     stave.addClef("treble").setContext(newCtx).draw();
+    }
+    else{
+      //measure without clef
+    stave.setContext(newCtx).draw();
+    }
 
 
     //Makes the notes we use to add to voice (uses makeStaff, createNotes, and addNewMeasure functions above)
