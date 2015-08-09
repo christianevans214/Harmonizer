@@ -93,10 +93,11 @@ var curNote;
 function draw() {
 	// nick's one-liner metronome (tm)
 	jQuery('#metro').toggle()
-	// console.log(new Date())
+		// console.log(new Date())
 	var timeDomain = fft.waveform(2048, 'float32');
 	var corrBuff = autoCorrelate(timeDomain);
-	if (mic.getLevel() > 0.01) {
+	if (mic.getLevel() > 0.03) {
+		hasSungFirstNote = true;
 		console.log(mic.getLevel())
 		var freq = findFrequency(corrBuff);
 		note = noteFromPitch(freq);
@@ -109,7 +110,7 @@ function draw() {
 		}
 		console.log("info on note", note, note / 12, Math.floor(note / 12));
 		//throws whistling octave range (6,7,8) into staff (3,4,5) octave range
-		if (playOption === "play") {
+		if (playOption === "play" && hasSungFirstNote) {
 			var octaveRange = Math.floor(note / 12);
 			var originalOctave = Math.floor(note / 12);
 			if (octaveRange === 6 || octaveRange === 7 || octaveRange === 8) {
@@ -120,7 +121,7 @@ function draw() {
 		note = noteFromPitch(freq);
 		console.log(noteStrings[note % 12])
 	} else {
-		if (playOption === "play") {
+		if (playOption === "play" && hasSungFirstNote) {
 			updateMeasure(0, 0)
 		}
 	}

@@ -7,6 +7,8 @@ var measureToReturn;
 var measureCounter;
 var editingMeasure;
 var theNotes = [];
+//christian's 3-liner first-note check
+var hasSungFirstNote = false;
 jQuery(document).ready(function() {
   var renderer;
   var newCtx;
@@ -29,11 +31,11 @@ jQuery(document).ready(function() {
   var canvas = jQuery(".notesCanvas")[0];
   console.log(canvas);
 
-  jQuery('#tempo').on('change', function(){
+  jQuery('#tempo').on('change', function() {
     var tempo = jQuery(this)[0].value
-    setFrameRate(tempo/30)
+    setFrameRate(tempo / 30)
   })
-  
+
   //Function to prepare all the notes for creation in next function (createNotes())
   //Does a lot of stupid if/else checks to see if the new note coming in is a repeat, and if it is --
   //it'll do some calculations to combine it with the previous note.
@@ -164,8 +166,8 @@ jQuery(document).ready(function() {
       theNotes = [];
       //If currently in editing mode, it'll set isEditing to false to end the cycle, return the measureCounter to where it was BEFORe
       //editing, and select the last canvas in the div.
-      
-        // adds measure without clef for continuous lines
+
+      // adds measure without clef for continuous lines
       if (isEditing) {
         isEditing = false;
         measureCounter = measureToReturn;
@@ -198,6 +200,7 @@ jQuery(document).ready(function() {
   //It'll start playing, allow you to re-sing the measure, and when you're done it'll stop the recording.
   //Works by setting the measureCounter to the id of the canvas clicked, while saving the measureToReturn for later use.
   window.editMeasure = function(id) {
+    hasSungFirstNote = false;
     playOption = "play";
     isEditing = true;
     measureToReturn = measureCounter;
@@ -210,6 +213,7 @@ jQuery(document).ready(function() {
 
   //If restart button is hit, this function is called. It will reset like...everything...and empty the #sheet div except for one new canvas
   window.restartSong = function() {
+    hasSungFirstNote = false;
     measureCounter = 0;
     theNotes = [];
     counter = 0;
@@ -223,7 +227,7 @@ jQuery(document).ready(function() {
   //Function that does voice/canvas rendering and adds pitch to HTML (Should probably be separated at some point)
   window.shouldContainClef = true;
   window.updateMeasure = function(note, octave, actualOctave) {
-    
+
     //If/else statement to set the pitch on the page
     if (octave === 0 && note === 0) {
       jQuery(".pitch").text("N/A");
@@ -264,13 +268,12 @@ jQuery(document).ready(function() {
 
     //Makes new stave, adds treble clef
     stave = new Vex.Flow.Stave(10, 0, 500);
-    if (shouldContainClef){
+    if (shouldContainClef) {
       //measure with clef
-    stave.addClef("treble").setContext(newCtx).draw();
-    }
-    else{
+      stave.addClef("treble").setContext(newCtx).draw();
+    } else {
       //measure without clef
-    stave.setContext(newCtx).draw();
+      stave.setContext(newCtx).draw();
     }
 
 
@@ -314,8 +317,8 @@ jQuery(document).ready(function() {
 function stopPlaying() {
   jQuery('.stop').hide()
   jQuery('.stop').on('click', function() {
-      jQuery(this).hide();
-      jQuery('.play').show();
+    jQuery(this).hide();
+    jQuery('.play').show();
     playOption = "stop";
     console.log("PLAY OPTION", playOption);
   })
@@ -340,8 +343,8 @@ function restartPlaying() {
 }
 
 //print Button
-function triggerPrint(){
-  jQuery('#print').on('click', function(){
+function triggerPrint() {
+  jQuery('#print').on('click', function() {
     //this was a little ridiculous, p5 has a function of its own called print and puts it on the global scope.
     //if you look in the html you'll see i stole window.print() away from p5 to use it here
     grabPrintFunctionBeforeP5StealsIt()
