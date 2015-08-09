@@ -347,6 +347,7 @@ function triggerPrint() {
   jQuery('#print').on('click', function() {
     //this was a little ridiculous, p5 has a function of its own called print and puts it on the global scope.
     //if you look in the html you'll see i stole window.print() away from p5 to use it here
+    //lol hax
     grabPrintFunctionBeforeP5StealsIt()
   })
 }

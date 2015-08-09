@@ -1,5 +1,6 @@
 var mic;
 var fft;
+var lowPass;
 
 
 var doCenterClip = false;
@@ -38,36 +39,20 @@ var newRoot = function(root) {
 
 function setup() {
 	mic = new p5.AudioIn();
-	lowPass = new p5.LowPass();
-	fft = new p5.FFT();
-	// lowPass.disconnect();
-	// lowPass.setInput(mic);
-	// fft.setInput(lowPass);
-	// mic.connect(fft);
+	mic.start();
 
+
+	lowPass = new p5.LowPass();
+	lowPass.disconnect();
 	mic.connect(lowPass);
 
+
+	fft = new p5.FFT();
 	fft.setInput(lowPass);
-
-	mic.start();
-	// reverb.connect()
-
-	// lowPass.connect("Master")
-
-	// lowPass.connect()
 
 	setFrameRate(4);
 }
 
-function makeMajorChord(freq) {
-	osc.freq(freq * 1.25)
-	osc2.freq(freq * 1.5)
-}
-
-function makeMinorChord(freq) {
-	osc.freq(freq * 1.2)
-	osc2.freq(freq * 1.5)
-}
 var currentFreq = 130;
 
 function noteFromPitch(frequency) {
@@ -83,11 +68,6 @@ function frequencyFromNoteNumber(note) {
 	return 440 * Math.pow(2, (note - 69) / 12);
 }
 
-//runs 50-60 times per second (every 20-30 ms)
-//could we throttle this?
-var recalcAvg = function(newFreq, curAvg, count) {
-	return (curAvg * count + newFreq) / (count + 1);
-}
 var curNote;
 
 function draw() {
