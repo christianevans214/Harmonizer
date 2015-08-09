@@ -29,7 +29,11 @@ jQuery(document).ready(function() {
   var canvas = jQuery(".notesCanvas")[0];
   console.log(canvas);
 
-
+  jQuery('#tempo').on('change', function(){
+    var tempo = jQuery(this)[0].value
+    setFrameRate(tempo/30)
+  })
+  
   //Function to prepare all the notes for creation in next function (createNotes())
   //Does a lot of stupid if/else checks to see if the new note coming in is a repeat, and if it is --
   //it'll do some calculations to combine it with the previous note.
@@ -214,7 +218,7 @@ jQuery(document).ready(function() {
 
   //Function that does voice/canvas rendering and adds pitch to HTML (Should probably be separated at some point)
   window.updateMeasure = function(note, octave, actualOctave) {
-
+    
     //If/else statement to set the pitch on the page
     if (octave === 0 && note === 0) {
       jQuery(".pitch").text("[-]");
