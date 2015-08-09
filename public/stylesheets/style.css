@@ -8,6 +8,10 @@ a {
 }
 
 
+#tempo{
+	width: 46px;
+}
+
 /*.drum{
 	display: inline-block;
 	font: 20px "Monaco";
@@ -20,11 +24,22 @@ a {
 	cursor: pointer;
 }*/
 
+.notesCanvas{
+
+}
+
+.notesCanvas:hover{
+	opacity: .5;
+	cursor: pointer;
+}
+
+
 .songInfo{
 	margin-top: 5%;
 	text-align: center;
 }
 .tempo-and-composer-and-timeMade{
+	width: 150px;
 	margin-right: 10%;
 	text-align: left;
 	float:right;

@@ -91,10 +91,13 @@ var recalcAvg = function(newFreq, curAvg, count) {
 var curNote;
 
 function draw() {
+	// nick's one-liner metronome (tm)
+	jQuery('#metro').toggle()
 	// console.log(new Date())
 	var timeDomain = fft.waveform(2048, 'float32');
 	var corrBuff = autoCorrelate(timeDomain);
 	if (mic.getLevel() > 0.01) {
+		console.log(mic.getLevel())
 		var freq = findFrequency(corrBuff);
 		note = noteFromPitch(freq);
 		if (curNote === note) {
