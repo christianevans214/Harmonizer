@@ -71,6 +71,9 @@ function frequencyFromNoteNumber(note) {
 var curNote;
 
 function draw() {
+	//scroll follow
+	if (playOption === "play") window.scrollTo(0, (document.body.scrollHeight+200));
+
 	// nick's one-liner metronome (tm)
 	jQuery('#metro').toggle()
 		// console.log(new Date())

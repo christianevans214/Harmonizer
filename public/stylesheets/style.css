@@ -10,6 +10,7 @@
     	width: 50%;
     	padding: 5pt;
     }
+
 }
 
 body {
@@ -96,6 +97,7 @@ a {
 	text-align: center;
 	clear: both;
 	margin: 0 auto;
+	padding-bottom: 6%;
 	padding-right: 5px;
 }
 
@@ -103,22 +105,78 @@ a {
 	font-size: 12pt;
 }
 
-#print{
-	float: right;
-	margin-top: 40px;
-	margin-right: 10%;
+#current{
+	position: relative;
+	top: -3px;
+	padding-left: 5px;
+	margin-bottom: 20px;
 }
 
-.buttons{
+#footer{
+	box-sizing: border-box;
+	color: white;
 	display: inline-block;
-	margin-top: 20px;
-	margin-left: 10%;
+	padding: 0px 10%;
+	border-top: 2px solid #300;
+	background: #444;
+	height: 40px;
+	width: 100%;
+	position: fixed;
+	bottom: 0px;
 }
 
-.buttons h2{
+.control-btn{
+	box-sizing: border-box;
+	width: 50px;
+	color: white;
+	padding-top: 9px;
+	margin: 20px;
+	text-align: center;
+	margin: 0 auto;
+	font-size: 18px;
+
+	border-left: 1px solid #888;
+	border-right: 1px solid #888;
 	display: inline-block;
-	font: 15px;
+	height: 100%;
+
+
+	/* unselectable */
+	  -moz-user-select: none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+
+   /*
+     Introduced in IE 10.
+     See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+   */
+   -ms-user-select: none;
+   user-select: none;
 }
+
+.img-button{
+	margin-top: -1px;
+	background: url(../mic.png);
+	background-size: 16px;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+#help{
+	position:fixed;
+	bottom: 40px;
+	margin: 0 10.5%;
+}
+
+
+.control-btn:hover{
+	background: #333;
+	cursor: pointer;
+}
+.control-btn:active{
+	background: #222;
+}
+
 
 .title {
 	display: inline-block;

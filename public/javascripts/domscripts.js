@@ -168,6 +168,7 @@ jQuery(document).ready(function() {
       //editing, and select the last canvas in the div.
 
       // adds measure without clef for continuous lines
+      // shouldContainClef = (id % 2 == 0)
       if (isEditing) {
         isEditing = false;
         measureCounter = measureToReturn;
@@ -215,6 +216,7 @@ jQuery(document).ready(function() {
   window.restartSong = function() {
     hasSungFirstNote = false;
     measureCounter = 0;
+    shouldContainClef = true;
     theNotes = [];
     counter = 0;
     playOption = "stop";
@@ -327,6 +329,7 @@ function stopPlaying() {
 //Start Button
 function startPlaying() {
   jQuery('.play').on('click', function() {
+    jQuery('#help').fadeOut("fast");
     jQuery(this).hide();
     jQuery('.stop').show()
     playOption = "play";
